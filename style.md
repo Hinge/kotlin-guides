@@ -6,9 +6,11 @@ is_site_nav_category: true
 site_nav_category: style
 ---
 
-This document serves as the complete definition of Google's Android coding standards for source code in the Kotlin Programming Language. A Kotlin source file is described as being in Google Android Style if and only if it adheres to the rules herein.
+This document serves as the complete definition of Hinge's Android coding standards for source code in the Kotlin Programming Language. A Kotlin source file is described as being in Hinge Android Style if and only if it adheres to the rules herein.
 
 Like other programming style guides, the issues covered span not only aesthetic issues of formatting, but other types of conventions or coding standards as well. However, this document focuses primarily on the hard-and-fast rules that we follow universally, and avoids giving advice that isn't clearly enforceable (whether by human or tool).
+
+This is Hinge's fork of the Android Kotlin Style Guide. Portions of this page are reproduced from work created and <a href="http://code.google.com/policies.html">shared by the Android Open Source Project</a> and used according to terms described in the <a href="http://creativecommons.org/licenses/by/2.5/">Creative Commons 2.5 Attribution License.</a>
 
 _<a href="changelog.html">Last update: {{ site.changes.last.date | date: "%Y-%m-%d" }}</a>_
 
@@ -62,44 +64,12 @@ For the remaining non-ASCII characters, either the actual Unicode character (e.g
 
 A `.kt` file comprises the following, in order:
 
-1. Copyright and/or license header (optional)
-2. File-level annotations
-3. Package statement
-4. Import statements
-5. Top-level declarations
+1. File-level annotations
+2. Package statement
+3. Import statements
+4. Top-level declarations
 
 Exactly one blank line separates each of these sections.
-
-### Copyright / License
-
-If a copyright or license header belongs in the file it should be placed at the immediate top in a multi-line comment.
-
-```kotlin
-/*
- * Copyright 2017 Google, Inc.
- *
- * ...
- */
- ```
-
-Do not use a [KDoc-style](https://kotlinlang.org/docs/reference/kotlin-doc.html) or single-line-style comment.
-
-```kotlin
-/**
- * Copyright 2017 Google, Inc.
- *
- * ...
- */
-```
-```kotlin
-// Copyright 2017 Google, Inc.
-//
-// ...
-```
-
-### File-level annotations
-
-Annotations with the 'file' [use-site target](https://kotlinlang.org/docs/reference/annotations.html#annotation-use-site-targets) are placed between any header comment and the package declaration.
 
 ### Package statement
 
@@ -119,7 +89,7 @@ A `.kt` file can declare one or more types, functions, properties, or type alias
 
 The contents of a file should be focused on a single theme. Examples of this would be a single public type or a set of extension functions performing the same operation on multiple receiver types. Unrelated declarations should be separated into their own files and public declarations within a single file should be minimized.
 
-No explicit restriction is placed on the number nor order of the contents of a file.
+No explicit restriction is placed on the number nor order of the contents of a file, but we generally prefer to have one top level class or object per file.
 
 Source files are usually read from top-to-bottom meaning that the order, in general, should reflect that the declarations higher up will inform understanding of those farther down. Different files may choose to order their contents differently. Similarly, one file may contain 100 properties, another 10 functions, and yet another a single class.
 
@@ -137,7 +107,19 @@ The order of members within a class follow the same rules as the top-level decla
 Braces are not required for `when` branches and `if` statement bodies which have no `else if`/`else` branches and which fit on a single line.
 
 ```kotlin
-if (string.isEmpty()) return
+if (string.isBlank()) return
+
+if (bearerToken.isNotBlank()) metrics.login(Result.success)
+else metrics.login(Result.failure(MissingTokenException()))
+
+when (value) {
+    0 -> return
+    // …
+}
+```
+
+```kotlin
+if (string.isBlank()) return
 
 when (value) {
     0 -> return
@@ -148,10 +130,10 @@ when (value) {
 Braces are otherwise required for any `if`, `for`, `when` branch, `do`, and `while` statements, even when the body is empty or contains only a single statement.
 
 ```kotlin
-if (string.isEmpty())
+if (string.isBlank())
     return  // WRONG!
 
-if (string.isEmpty()) {
+if (string.isBlank()) {
     return  // Okay
 }
 ```
@@ -209,19 +191,23 @@ try {
 
 ### Expressions
 
-An `if`/`else` conditional that is used as an expression may omit braces _only_ if the entire expression fits on one line.
+An `if`/`else` conditional that is used as an expression may omit braces _only_ if the entire expression fits on one line. An expression does _not_ fit on one line if it needs to wrap in Github code review, which is about 80-96 characters.
 
 ```kotlin
-val value = if (string.isEmpty()) 0 else 1  // Okay
+val value = if (string.isBlank()) 0 else 1  // Okay
+```
+
+```kotlin
+val value = if (string != null && string.isNotBlank() && string.startsWith("ProfileRemoved") && string.substringAfter("/").toIntOrNull() != null) 1 else 0  // WRONG!
 ```
 ```kotlin
-val value = if (string.isEmpty())  // WRONG!
+val value = if (string.isBlank())  // WRONG!
                 0
             else
                 1
 ```
 ```kotlin
-val value = if (string.isEmpty()) { // Okay
+val value = if (string.isBlank()) { // Okay
     0
 } else {
     1
@@ -324,6 +310,12 @@ Read-only properties can use a shorter syntax which fits on a single line.
 val defaultExtension: String get() = "kt"
 ```
 
+They can also be multi-line, consistency isn't a big deal here
+
+```kotlin
+val defaultExtension: String
+    get() = "kt"
+```
 
 ## Whitespace
 
@@ -379,12 +371,12 @@ Beyond where required by the language or other style rules, and apart from liter
 
     ```kotlin
     // WRONG!
-    if (list.isEmpty()){
+    if (list.isBlank()){
     }
     ```
     ```kotlin
     // Okay
-    if (list.isEmpty()) {
+    if (list.isBlank()) {
     }
     ```
 
