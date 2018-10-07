@@ -1,10 +1,10 @@
 # Site settings
 title: Android Kotlin Guides
-email: your-email@domain.com
+email: android@hinge.co
 description: >
   Official guides for developing Kotlin on Android.
 baseurl: "/kotlin-guides"
-url: "https://android.github.io"
+url: "https://hinge.github.io"
 
 # Build settings
 markdown: kramdown
